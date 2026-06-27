@@ -1,0 +1,35 @@
+column,dtype,description
+customer_id,string,Unique customer identifier
+first_purchase,datetime,First purchase within observation window
+last_purchase,datetime,Last purchase within observation window
+frequency_orders,int,Distinct orders (RFM frequency)
+purchase_lines,int,Purchase line items
+monetary_total_spend,float,Gross spend in observation window (RFM monetary)
+total_quantity,int,Units purchased
+unique_products,int,Distinct stock codes purchased
+unique_countries,int,Distinct shipping countries
+avg_unit_price,float,Mean unit price paid
+max_unit_price,float,Max unit price paid
+recency_days,int,Days from last purchase to snapshot (RFM recency)
+tenure_days,int,Span between first and last purchase
+tenure_since_first,int,Customer age: snapshot - first purchase
+avg_order_value,float,monetary_total_spend / frequency_orders
+avg_qty_per_order,float,total_quantity / frequency_orders
+is_one_time_buyer,int,1 if the customer placed exactly one order
+purchase_frequency_rate,float,frequency_orders / tenure_since_first
+recency_to_tenure_ratio,float,recency_days / tenure_since_first
+distinct_active_days,int,Distinct calendar days with a purchase
+active_months,int,Distinct months with a purchase
+avg_gap_days,float,Mean inter-purchase gap (imputed for one-timers)
+median_gap_days,float,Median inter-purchase gap (imputed for one-timers)
+max_gap_days,float,Max inter-purchase gap (imputed for one-timers)
+return_lines,int,Return / cancellation lines
+return_invoices,int,Distinct return invoices
+returned_quantity,float,Units returned
+return_value,float,Absolute value of returned line amounts (£)
+net_spend,float,monetary_total_spend - return_value
+return_invoice_ratio,float,return_invoices / frequency_orders
+return_value_ratio,float,return_value / monetary_total_spend
+snapshot_date,datetime,Reference snapshot date
+future_orders,int,Orders in the label window (used to derive the label)
+churn_label,int,"Target: 1 if no purchase in the label window, else 0"

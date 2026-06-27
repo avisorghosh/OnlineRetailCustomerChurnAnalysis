@@ -1,0 +1,32 @@
+column,dtype,description
+customer_id,string,Unique customer identifier
+first_purchase,datetime,Timestamp of customer's first purchase
+last_purchase,datetime,Timestamp of customer's most recent purchase
+purchase_lines,int,Total number of purchase line items
+unique_invoices,int,Number of distinct invoices (orders)
+total_quantity,int,Total units purchased
+total_spend,float,Gross spend across all purchase lines (£)
+avg_unit_price,float,Mean unit price across purchase lines (£)
+countries,int,Number of distinct countries the customer ordered from
+distinct_products,int,Number of unique stock codes purchased
+days_active,int,Count of distinct calendar days with a purchase
+primary_country,string,Most frequent country for the customer
+return_count,int,Number of return / cancellation lines
+return_value,float,"Sum of return line amounts (negative, £)"
+customer_tenure_days,int,Days between first and last purchase
+net_spend,float,"total_spend + return_value (net of refunds, £)"
+avg_basket_size,float,purchase_lines / unique_invoices
+avg_order_value,float,total_spend / unique_invoices (£)
+return_rate,float,return_count / unique_invoices
+first_purchase_month,string,YYYY-MM of first purchase (cohort key)
+country_group,string,UK / EU / Other rollup of primary_country
+spend_quartile,category,Quartile of total_spend (Q1 lowest .. Q4 highest)
+frequency_segment,category,One-time / Occasional / Regular / Loyal
+recency_days,int,Days from last_purchase to observation_date
+frequency,int,RFM frequency = unique_invoices
+monetary,float,RFM monetary = total_spend (£)
+r_score,int,RFM recency score (1-4)
+f_score,int,RFM frequency score (1-4)
+m_score,int,RFM monetary score (1-4)
+rfm_score,int,Combined RFM code (r*100 + f*10 + m)
+rfm_segment,string,"Named RFM segment (Champions, At Risk, etc.)"

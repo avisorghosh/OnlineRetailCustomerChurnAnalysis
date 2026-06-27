@@ -1,0 +1,34 @@
+column,dtype,description
+customer_id,string,Unique customer identifier
+last_purchase_date,datetime,Most recent purchase timestamp
+first_purchase_date,datetime,First purchase timestamp
+frequency_orders,int,RFM Frequency — distinct purchase invoices
+purchase_lines,int,Total purchase line items
+monetary_total_spend,float,RFM Monetary — gross purchase spend (£)
+total_quantity,int,Total units purchased
+recency_days,int,RFM Recency — days from last purchase to snapshot
+tenure_days,int,Active span: last_purchase − first_purchase (days)
+tenure_since_first,int,Customer age: snapshot − first_purchase (days)
+avg_order_value,float,monetary_total_spend / frequency_orders (£)
+avg_qty_per_order,float,total_quantity / frequency_orders
+is_one_time_buyer,int,1 if the customer placed exactly one order
+purchase_frequency_rate,float,frequency_orders / tenure_since_first (orders/day)
+recency_to_tenure_ratio,float,"recency_days / tenure_since_first (0=just bought, 1=dormant)"
+return_lines,int,Number of return / cancellation lines
+return_invoices,int,Number of distinct return / cancellation invoices
+returned_quantity,float,Total units returned
+return_value,float,Absolute value of returned line amounts (£)
+net_spend,float,monetary_total_spend − return_value (£)
+return_invoice_ratio,float,return_invoices / frequency_orders
+return_value_ratio,float,return_value / monetary_total_spend (uncapped)
+unique_products,int,Distinct stock codes purchased
+unique_descriptions,int,Distinct product descriptions purchased
+unique_countries,int,Distinct countries ordered from
+avg_unit_price,float,Mean unit price across purchase lines (£)
+max_unit_price,float,Maximum unit price paid (£)
+distinct_active_days,int,Distinct calendar days with a purchase
+active_months,int,Distinct calendar months with a purchase
+avg_gap_days,float,Mean days between purchases (imputed for one-time buyers)
+median_gap_days,float,Median inter-purchase gap (imputed for one-time buyers)
+max_gap_days,float,Max inter-purchase gap (imputed for one-time buyers)
+snapshot_date,datetime,Reference snapshot for recency / age features

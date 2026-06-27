@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Raw source data (large; download separately, see README)
+Online retail dataset.xlsx
+
+# Generated data artifacts (reproducible by running the notebooks in order)
+clean_transactions.csv
+customer_features.csv
+customer_analytical_base_enhanced.csv
+modeling_dataset.csv
+train_split.csv
+test_split.csv
+eda_metadata.csv
+
+# Generated model / metrics artifacts
+best_churn_model.joblib
+model_test_metrics.json
+final_test_metrics.json
+baseline_model_comparison.csv
+threshold_sensitivity.csv
+feature_importance_permutation.csv
+retention_recommendations.csv
+
+# Slide assets exported from the notebooks (regenerate with export_presentation_assets.py)
+presentation_assets/
