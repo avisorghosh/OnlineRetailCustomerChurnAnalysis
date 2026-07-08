@@ -1,0 +1,17 @@
+Metric,Value
+Analysis Date,2026-07-08 22:52:27
+Data Period,2009-12-01 to 2010-12-09
+Observation Date (for churn window),2010-12-09
+Raw Records,525461
+Cleaned Records,409018
+Purchase Records,399589
+Return / Cancellation Records,9401
+Special Stock-Code Rows Removed,1745
+Total Customers,4295
+Gross Revenue (£),"8,643,926.77"
+Net Revenue after Returns (£),"8,399,631.67"
+Avg Customer Net Spend (£),"1,955.68"
+Median Customer Net Spend (£),670.41
+Unique Countries,40
+Customer Gini Coefficient,0.704
+RFM Segments Identified,8

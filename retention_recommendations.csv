@@ -1,0 +1,7 @@
+driver,risk_signal,recommended_action
+active_months,lower active_months -> more likely to churn,Few active months means the buying habit never took hold. Push an early second/third order with onboarding nudges and replenishment reminders.
+recency_to_tenure_ratio,higher recency_to_tenure_ratio -> more likely to churn,Customers dormant for most of their lifetime are drifting off. Reach out with win-back contact before the gap widens.
+unique_products,lower unique_products -> more likely to churn,A narrow product range keeps customers loosely attached. Cross-sell adjacent categories to deepen the basket.
+recency_days,higher recency_days -> more likely to churn,A long silence is the clearest warning sign. Fire a time-bound win-back offer once recency passes the usual re-purchase gap.
+distinct_active_days,lower distinct_active_days -> more likely to churn,Few shopping days means weak engagement. Use lifecycle email/app nudges to build a routine.
+return_invoice_ratio,lower return_invoice_ratio -> more likely to churn,"Counter-intuitively, customers who never return anything are the ones who quietly lapse - a return here marks an active, engaged buyer. Read very low overall interaction as a churn signal, not a good sign."
