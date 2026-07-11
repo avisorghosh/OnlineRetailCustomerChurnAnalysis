@@ -1,7 +1,7 @@
 """Collect slide-ready assets from the churn project.
 
-- Pulls every rendered chart (image/png) out of the five notebooks and writes them
-  as standalone PNGs (no re-execution needed - we read the saved outputs).
+- Renders each marimo notebook to HTML (headless re-execution via `marimo export`)
+  and pulls every embedded chart (image/png) out as standalone PNGs.
 - Renders the key result tables (model comparison, metrics, drivers, recommendations,
   EDA summary) as clean PNG images for easy pasting into slides.
 - Copies the underlying CSV/JSON tables alongside.
@@ -10,13 +10,17 @@ Run:  python export_presentation_assets.py
 """
 from pathlib import Path
 import base64
+import html as html_lib
 import json
+import re
 import shutil
+import subprocess
+import sys
+import tempfile
 import textwrap
 
 import pandas as pd
 import matplotlib.pyplot as plt
-import nbformat
 
 BASE = Path(__file__).resolve().parent
 OUT = BASE / "presentation_assets"
@@ -27,36 +31,68 @@ for d in (CHARTS, TABLES):
 
 # Short tag per notebook so chart filenames are meaningful.
 NOTEBOOKS = {
-    "1_data_preparation_eda.ipynb": "01_eda",
-    "2_feature_engineering.ipynb": "02_features",
-    "3_churn_definition_labeling.ipynb": "03_churn",
-    "4_model_development.ipynb": "04_model",
-    "5_evaluation_interpretability.ipynb": "05_evaluation",
+    "1_data_preparation_eda.py": "01_eda",
+    "2_feature_engineering.py": "02_features",
+    "3_churn_definition_labeling.py": "03_churn",
+    "4_model_development.py": "04_model",
+    "5_evaluation_interpretability.py": "05_evaluation",
 }
+
+# Matches base64-encoded PNGs embedded in the exported HTML. Marimo serialises
+# figures either as plain data URIs or inside (sometimes doubly) escaped JSON
+# mimebundles, so instead of anchoring on the wrapper we anchor on the base64
+# PNG signature itself (`iVBORw0KGgo` == \x89PNG\r\n\x1a\n). Escaped variants
+# interleave backslashes into the base64 run; those are stripped before decoding.
+_PNG_B64_RE = re.compile(r"(iVBORw0KGgo[A-Za-z0-9+/=\\]+)")
+
+# Ignore tiny embedded PNGs (icons, favicons); real charts are far larger.
+_MIN_PNG_BYTES = 5_000
 
 
 def extract_charts() -> int:
     count = 0
-    for nb_name, tag in NOTEBOOKS.items():
-        path = BASE / nb_name
-        if not path.exists():
-            print(f"  skip (missing): {nb_name}")
-            continue
-        nb = nbformat.read(path, as_version=4)
-        idx = 0
-        for cell in nb.cells:
-            if cell.cell_type != "code":
+    with tempfile.TemporaryDirectory() as tmp:
+        for nb_name, tag in NOTEBOOKS.items():
+            path = BASE / nb_name
+            if not path.exists():
+                print(f"  skip (missing): {nb_name}")
                 continue
-            for output in cell.get("outputs", []):
-                data = output.get("data", {})
-                png = data.get("image/png")
-                if not png:
+            html_path = Path(tmp) / f"{tag}.html"
+            result = subprocess.run(
+                [sys.executable, "-m", "marimo", "export", "html",
+                 str(path), "-o", str(html_path), "--no-include-code"],
+                cwd=BASE, capture_output=True, text=True,
+            )
+            if result.returncode != 0 or not html_path.exists():
+                print(f"  export failed: {nb_name}\n{result.stderr.strip()[:500]}")
+                continue
+            html = html_path.read_text(encoding="utf-8")
+            # Some figures are embedded as doubly-escaped JSON (unicode escapes
+            # wrapping HTML entities). Unescape both layers so every base64 run
+            # is clean before matching.
+            html = html_lib.unescape(html.replace("\\u0026", "&"))
+            for _esc, _ch in (("\\u003d", "="), ("\\u002f", "/"), ("\\u002b", "+")):
+                html = html.replace(_esc, _ch)
+            idx = 0
+            seen: set[str] = set()
+            for match in _PNG_B64_RE.finditer(html):
+                b64 = match.group(1).replace("\\", "")
+                if b64 in seen:
+                    continue
+                seen.add(b64)
+                try:
+                    png_bytes = base64.b64decode(b64)
+                except Exception:
+                    continue
+                if (len(png_bytes) < _MIN_PNG_BYTES
+                        or not png_bytes.startswith(b"\x89PNG")
+                        or b"IEND" not in png_bytes[-16:]):
                     continue
                 idx += 1
                 count += 1
                 fname = CHARTS / f"{tag}_{idx:02d}.png"
-                fname.write_bytes(base64.b64decode(png))
-        print(f"  {nb_name}: {idx} chart(s)")
+                fname.write_bytes(png_bytes)
+            print(f"  {nb_name}: {idx} chart(s)")
     return count
 
 
